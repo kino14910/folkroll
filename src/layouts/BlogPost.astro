@@ -1,86 +1,272 @@
 ---
-import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
+import heroImagePlaceholder from '@/assets/cg_rm18_0103.webp'
+import BackToTop from '@/components/BackToTop.svelte'
+import Footer from '@/components/Footer.astro'
+import FormattedDate from '@/components/FormattedDate.astro'
+import Head from '@/components/Head.astro'
+import Header from '@/components/Header.astro'
+import type { MarkdownHeading } from 'astro'
+import { Image } from 'astro:assets'
+import type { CollectionEntry } from 'astro:content'
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data'] & {
+  headings?: MarkdownHeading[]
+}
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  heroImage = heroImagePlaceholder,
+  headings,
+} = Astro.props
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const filteredHeadings = headings?.filter(h => h.depth <= 3) || []
 ---
 
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+<html lang='en'>
+  <head>
+    <Head title={title} description={description} />
+  </head>
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
+  <body>
+    <div class='layout'>
+      <Header client:load />
+      <main>
+        {
+          headings && (
+            <aside>
+              <h2>目录</h2>
+              <nav class='toc' id='toc'>
+                <ul>
+                  {headings.map(heading => (
+                    <li
+                      style={`margin-left: ${(heading.depth - 2) * 0.5}em`}
+                      data-depth={heading.depth}
+                    >
+                      <a href={`#${heading.slug}`} data-slug={heading.slug}>
+                        {heading.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </aside>
+          )
+        }
+        <article>
+          <!-- <div class='hero-image'>
+          {
+            heroImage && (
+              <Image width={1020} height={510} src={heroImage} alt='' />
+            )
+          }
+        </div> -->
+          <div class='prose'>
+            <div class='title'>
+              <div class='date'>
+                <FormattedDate date={pubDate} />
+                {
+                  updatedDate && (
+                    <div class='last-updated-on'>
+                      Last updated on <FormattedDate date={updatedDate} />
+                    </div>
+                  )
+                }
+              </div>
+              <h1>{title}</h1>
+              <hr />
+            </div>
+            <slot />
+          </div>
+        </article>
+      </main>
+      <Footer />
+      <BackToTop client:load />
+    </div>
+
+    <script>
+      const toc = document.getElementById('toc')
+      const body = document.body
+
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          body.classList.add('scrolled')
+        } else {
+          body.classList.remove('scrolled')
+        }
+      })
+
+      if (toc) {
+        const links = toc.querySelectorAll('a')
+        const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6')
+
+        const observerOptions = {
+          rootMargin: '-100px 0% 0%',
+          threshold: 0,
+        }
+
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            const id = entry.target.id
+            const activeLink = Array.from(links).find(
+              link => link.getAttribute('data-slug') === id,
+            )
+            if (activeLink) {
+              if (entry.isIntersecting) {
+                activeLink.classList.add('active')
+                // 确保高亮的元素在可见区域内
+                const tocRect = toc.getBoundingClientRect()
+                const linkRect = activeLink.getBoundingClientRect()
+
+                if (linkRect.top < tocRect.top) {
+                  toc.scrollTop += linkRect.top - tocRect.top - linkRect.height
+                } else if (linkRect.bottom > tocRect.bottom) {
+                  toc.scrollTop +=
+                    linkRect.bottom - tocRect.bottom + linkRect.height
+                }
+              } else {
+                activeLink.classList.remove('active')
+              }
+            }
+          })
+        }, observerOptions)
+
+        headings.forEach(heading => {
+          observer.observe(heading)
+        })
+
+        links.forEach(link => {
+          link.addEventListener('click', e => {
+            e.preventDefault()
+            const targetId = link.getAttribute('href')?.slice(1)
+            const targetElement = document.getElementById(targetId ?? '')
+            if (targetElement) {
+              const offset = 80
+              const elementPosition = targetElement.getBoundingClientRect().top
+              const offsetPosition =
+                elementPosition + window.pageYOffset - offset
+
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth',
+              })
+            }
+          })
+        })
+      }
+    </script>
+  </body>
 </html>
+
+<style>
+  main {
+    width: calc(100% - 2em);
+    max-width: 100%;
+    margin: 0;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+  }
+  .hero-image {
+    width: 100%;
+  }
+  .hero-image img {
+    display: block;
+    margin: 0 auto;
+    border-radius: 12px;
+  }
+  .prose {
+    width: 720px;
+    max-width: calc(100% - 2em);
+    margin: auto;
+    padding: 1em;
+    color: var(--text-main);
+  }
+  .title {
+    margin-bottom: 1em;
+    padding: 1em 0;
+    text-align: center;
+    line-height: 1;
+  }
+  .title h1 {
+    margin: 0 0 0.5em 0;
+  }
+  .date {
+    margin-bottom: 0.5em;
+    color: var(--primary-gray);
+  }
+  .last-updated-on {
+    font-style: italic;
+  }
+  aside {
+    position: sticky;
+    top: 2em;
+    width: 240px;
+    max-width: 25dvw;
+    height: fit-content;
+    max-height: calc(100dvh - 75px - 4em);
+    padding: 1.5em;
+    background: var(--bg-color);
+    border-radius: 8px;
+    transition:
+      top 0.3s ease,
+      max-height 0.3s ease;
+  }
+  aside h2 {
+    margin: 0 0 1em 0;
+    font-size: 1.2em;
+    color: var(--primary-dark);
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 0.5em;
+  }
+  .toc {
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+  }
+
+  body.scrolled .toc {
+    top: 5em;
+    max-height: calc(100dvh - 80px);
+  }
+  .toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .toc li {
+    margin: 0;
+  }
+  .toc a {
+    display: block;
+    padding: 0.2em 0.4em;
+    color: var(text-secondary);
+    text-decoration: none;
+    /* border-radius: 4px; */
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+  }
+  .toc a:hover {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+  }
+  .toc a.active {
+    background-color: var(--primary-gray);
+    color: var(--primary-dark);
+    border-left-color: var(--primary-dark);
+    font-weight: 500;
+  }
+  @media (max-width: 1024px) {
+    .toc {
+      display: none;
+    }
+  }
+
+  .layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    position: relative;
+  }
+</style>

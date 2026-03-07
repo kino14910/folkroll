@@ -1,0 +1,26 @@
+---
+import { Image } from 'astro:assets'
+---
+
+<style>
+  img {
+    display: block;
+    width: 75px;
+  }
+
+  @media screen and (max-width: 520px) {
+    img {
+      display: none;
+    }
+  }
+</style>
+
+<a href='/'>
+  <Image
+    alt='Blog Logo'
+    src='/assets/logo.webp'
+    width={75}
+    height={75}
+    loading='eager'
+  />
+</a>

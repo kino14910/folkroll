@@ -1,0 +1,40 @@
+---
+import HeaderLink from './HeaderLink.astro'
+import ThemeToggleButton from './ThemeToggleButton.svelte'
+---
+
+<style>
+  nav {
+    align-items: center;
+    display: flex;
+    flex: 1;
+    font-family: var(--font-family-sans);
+    font-weight: 700;
+    justify-content: flex-end;
+    text-transform: uppercase;
+  }
+
+  .selected::before {
+    background: var(--primary);
+  }
+
+  .theme-toggle-container {
+    width: 75px;
+  }
+
+  @media screen and (max-width: 520px) {
+    .theme-toggle-container {
+      margin-right: 1em;
+    }
+  }
+</style>
+
+<nav>
+  <HeaderLink href='' />
+  <HeaderLink href='about' />
+  <HeaderLink href='blog' />
+  <HeaderLink href='note' />
+  <div class='theme-toggle-container'>
+    <ThemeToggleButton client:load />
+  </div>
+</nav>

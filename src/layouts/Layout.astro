@@ -1,0 +1,49 @@
+---
+import Footer from '@/components/Footer.astro'
+import Head from '@/components/Head.astro'
+import Header from '@/components/Header.astro'
+
+export interface Props {
+  title: string
+  description: string
+  footerStyle?: string
+}
+const { title, description, footerStyle } = Astro.props
+---
+
+<html lang='en'>
+  <head>
+    <Head title={title} description={description} />
+  </head>
+  <body>
+    <div class='layout'>
+      <Header />
+
+      <main>
+        <slot />
+      </main>
+
+      <Footer style={footerStyle} />
+    </div>
+  </body>
+</html>
+
+<style>
+  .layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    position: relative;
+  }
+
+  main {
+    flex: 1;
+    margin: 0 auto;
+    max-width: 1400px;
+    padding: 1em 2em;
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+</style>
