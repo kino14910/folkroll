@@ -59,10 +59,10 @@
     },
   ])
 
-  let cardElements: HTMLElement[] = []
-  let container: HTMLElement | null
-
   // $inspect(cards[1].offsetX)
+
+  let cardElements: HTMLElement[] = $state([])
+  let container: HTMLElement | null
 
   let dragStartX = 0
   let dragStartY = 0
@@ -91,13 +91,11 @@
     if (activeCardId === null) return
     const draggingCard = cardElements.find(card => card == e.target)
     const card = cards.find(c => c.id === activeCardId)
-    if (card && card.dragging && draggingCard && container) {
-      const cardRect: DOMRect | undefined = draggingCard.getBoundingClientRect()
-      const containerRect: DOMRect | undefined =
-        container.getBoundingClientRect()
-      card.offsetX = e.clientX - containerRect.x - cardRect.width / 2
-      card.offsetY = e.clientY - containerRect.y - cardRect.height / 2
-    }
+    if (!(card && card.dragging && draggingCard && container)) return
+    const cardRect: DOMRect | undefined = draggingCard.getBoundingClientRect()
+    const containerRect: DOMRect | undefined = container.getBoundingClientRect()
+    card.offsetX = e.clientX - containerRect.x - cardRect.width / 2
+    card.offsetY = e.clientY - containerRect.y - cardRect.height / 2
   }
 
   function handlePointerUp() {
@@ -140,14 +138,14 @@
 </script>
 
 <div
-  class="home_photos"
+  class="home-photos"
   onpointermove={handlePointerMove}
   onpointerup={handlePointerUp}
   role="main"
 >
-  <div class="home_photos_container">
+  <div class="home-photos-container">
     <h4 class="banner">PHOTOS</h4>
-    <div class="home_photos_plates" bind:this={container}>
+    <div class="home-photos-plates" bind:this={container}>
       {#each cards as card, index (card.id)}
         <div
           class="poker"
@@ -168,7 +166,7 @@
         </div>
       {/each}
       <div
-        class="poker_top"
+        class="poker-top"
         onclick={move}
         onkeydown={e => e.key === 'Enter' && move()}
         role="button"
@@ -198,7 +196,7 @@
 </div>
 
 <style>
-  .home_photos {
+  .home-photos {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -207,7 +205,7 @@
     overflow: hidden;
   }
 
-  .home_photos_container {
+  .home-photos-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -227,7 +225,7 @@
     transform: scaleY(70%);
   }
 
-  .home_photos_plates {
+  .home-photos-plates {
     position: relative;
     width: 45rem;
     height: 25rem;
@@ -236,7 +234,7 @@
   }
 
   .poker,
-  .poker_top {
+  .poker-top {
     user-select: none;
     position: absolute;
     width: 20rem;
@@ -266,7 +264,7 @@
     pointer-events: none;
   }
 
-  .poker_top {
+  .poker-top {
     background-color: var(--primary);
     border: none;
     cursor: pointer;
@@ -275,13 +273,14 @@
     justify-content: center;
     align-items: center;
     transform: rotate(6deg) translate(125%, -23%);
-  }
-  .poker_top img {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
-    pointer-events: none;
+
+    & img {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      pointer-events: none;
+    }
   }
 
   .arrow-wrapper {
@@ -289,6 +288,7 @@
     width: 3rem;
     height: 3rem;
     background-color: #410030;
+    color: white;
     border-radius: 50%;
     animation: arrow-move 1.5s infinite ease-in-out;
     filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.5));

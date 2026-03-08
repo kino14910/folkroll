@@ -26,23 +26,21 @@
   unicode-range: U+A, U+20, U+27, U+2C-2E, U+30-36, U+3A, U+3E, U+41-55, U+57-59, U+61-70, U+72-79, U+7B, U+7D, U+A9, U+2014, U+4EE3, U+4F53, U+4FE1, U+5212, U+5219, U+52A1, U+540E, U+5668, U+5C3E, U+5E7B, U+5F0F, U+6050, U+60F3, U+620F, U+65B9, U+6700, U+670D, U+67AA, U+68B0, U+6B63, U+6E38, U+7406, U+7531, U+75C7, U+7801, U+7834, U+7BA1, U+7CFB, U+7EC8, U+7EDC, U+7F00, U+7F51, U+8272, U+8303, U+8868, U+89C4, U+89E3, U+8BA1, U+8DEF, U+8FBE, U+901A, U+914D, U+9152, U+989C, U+9B3C, U+9E21
 }
 
-/* Chinese */
-@font-face {
-  font-family: 'MiSans';
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url("/fonts/MiSans VF-subset.woff2") format('woff2');
-  unicode-range: U+A, U+20, U+27, U+2C-2E, U+30-36, U+3A, U+3E, U+41-55, U+57-59, U+61-70, U+72-79, U+7B, U+7D, U+A9, U+2014, U+4EE3, U+4F53, U+4FE1, U+5212, U+5219, U+52A1, U+540E, U+5668, U+5C3E, U+5E7B, U+5F0F, U+6050, U+60F3, U+620F, U+65B9, U+6700, U+670D, U+67AA, U+68B0, U+6B63, U+6E38, U+7406, U+7531, U+75C7, U+7801, U+7834, U+7BA1, U+7CFB, U+7EC8, U+7EDC, U+7F00, U+7F51, U+8272, U+8303, U+8868, U+89C4, U+89E3, U+8BA1, U+8DEF, U+8FBE, U+901A, U+914D, U+9152, U+989C, U+9B3C, U+9E21
-}
-
-/* Monospace */
 @font-face {
   font-family: 'Roboto Mono';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
   src: url("/fonts/RobotoMono-VariableFont_wght-subset.woff2") format('woff2');
+  unicode-range: U+A, U+20, U+27, U+2C-2E, U+30-36, U+3A, U+3E, U+41-55, U+57-59, U+61-70, U+72-79, U+7B, U+7D, U+A9, U+2014, U+4EE3, U+4F53, U+4FE1, U+5212, U+5219, U+52A1, U+540E, U+5668, U+5C3E, U+5E7B, U+5F0F, U+6050, U+60F3, U+620F, U+65B9, U+6700, U+670D, U+67AA, U+68B0, U+6B63, U+6E38, U+7406, U+7531, U+75C7, U+7801, U+7834, U+7BA1, U+7CFB, U+7EC8, U+7EDC, U+7F00, U+7F51, U+8272, U+8303, U+8868, U+89C4, U+89E3, U+8BA1, U+8DEF, U+8FBE, U+901A, U+914D, U+9152, U+989C, U+9B3C, U+9E21
+}
+
+@font-face {
+  font-family: 'MiSans';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/MiSans VF-subset.woff2") format('woff2');
   unicode-range: U+A, U+20, U+27, U+2C-2E, U+30-36, U+3A, U+3E, U+41-55, U+57-59, U+61-70, U+72-79, U+7B, U+7D, U+A9, U+2014, U+4EE3, U+4F53, U+4FE1, U+5212, U+5219, U+52A1, U+540E, U+5668, U+5C3E, U+5E7B, U+5F0F, U+6050, U+60F3, U+620F, U+65B9, U+6700, U+670D, U+67AA, U+68B0, U+6B63, U+6E38, U+7406, U+7531, U+75C7, U+7801, U+7834, U+7BA1, U+7CFB, U+7EC8, U+7EDC, U+7F00, U+7F51, U+8272, U+8303, U+8868, U+89C4, U+89E3, U+8BA1, U+8DEF, U+8FBE, U+901A, U+914D, U+9152, U+989C, U+9B3C, U+9E21
 }
 

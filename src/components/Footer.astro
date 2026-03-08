@@ -3,15 +3,14 @@ const today = new Date()
 interface Props {
   style?: string
 }
-const { style = '' } = Astro.props
 ---
 
-<footer style={style}>
+<footer>
   &copy; {today.getFullYear()} Kino. All rights reserved.
 
   <div class='social-links'>
     <a
-      href='https://github.com/withastro/astro'
+      href='https://github.com/kino14910'
       target='_blank'
       aria-label='github link'
     >

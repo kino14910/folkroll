@@ -3,6 +3,27 @@ import Logo from './Logo.astro'
 import Nav from './Nav.astro'
 ---
 
+<script>
+  const header = document.querySelector('header')
+  if (header) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        header?.classList.add('scrolled')
+      } else {
+        header?.classList.remove('scrolled')
+      }
+    })
+  }
+</script>
+
+<div class='header-placeholder'></div>
+<header>
+  <div class='logo'>
+    <Logo />
+  </div>
+  <Nav />
+</header>
+
 <style>
   .header-placeholder {
     height: calc(4em + 75px);
@@ -19,7 +40,7 @@ import Nav from './Nav.astro'
     padding: 2em;
     width: 100%;
     transition: all 0.3s ease;
-    z-index: 9;
+    z-index: 99;
     /* min-height: 80px; */
   }
 
@@ -56,24 +77,3 @@ import Nav from './Nav.astro'
     }
   }
 </style>
-
-<div class='header-placeholder'></div>
-<header>
-  <div class='logo'>
-    <Logo />
-  </div>
-  <Nav />
-</header>
-
-<script>
-  const header = document.querySelector('header')
-  if (header) {
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 50) {
-        header?.classList.add('scrolled')
-      } else {
-        header?.classList.remove('scrolled')
-      }
-    })
-  }
-</script>

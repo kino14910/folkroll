@@ -1,13 +1,10 @@
 ---
 import heroImagePlaceholder from '@/assets/cg_rm18_0103.webp'
 import BackToTop from '@/components/BackToTop.svelte'
-import Footer from '@/components/Footer.astro'
 import FormattedDate from '@/components/FormattedDate.astro'
-import Head from '@/components/Head.astro'
-import Header from '@/components/Header.astro'
 import type { MarkdownHeading } from 'astro'
-import { Image } from 'astro:assets'
 import type { CollectionEntry } from 'astro:content'
+import Layout from './Layout.astro'
 
 type Props = CollectionEntry<'blog'>['data'] & {
   headings?: MarkdownHeading[]
@@ -24,140 +21,129 @@ const {
 const filteredHeadings = headings?.filter(h => h.depth <= 3) || []
 ---
 
-<html lang='en'>
-  <head>
-    <Head title={title} description={description} />
-  </head>
-
-  <body>
-    <div class='layout'>
-      <Header client:load />
-      <main>
-        {
-          headings && (
-            <aside>
-              <h2>目录</h2>
-              <nav class='toc' id='toc'>
-                <ul>
-                  {headings.map(heading => (
-                    <li
-                      style={`margin-left: ${(heading.depth - 2) * 0.5}em`}
-                      data-depth={heading.depth}
-                    >
-                      <a href={`#${heading.slug}`} data-slug={heading.slug}>
-                        {heading.text}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            </aside>
-          )
-        }
-        <article>
-          <!-- <div class='hero-image'>
+<Layout title={title} description={description}>
+  <main>
+    {
+      headings && (
+        <aside>
+          <h2>目录</h2>
+          <nav class='toc' id='toc'>
+            <ul>
+              {headings.map(heading => (
+                <li
+                  style={`margin-left: ${(heading.depth - 2) * 0.5}em`}
+                  data-depth={heading.depth}
+                >
+                  <a href={`#${heading.slug}`} data-slug={heading.slug}>
+                    {heading.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+      )
+    }
+    <article>
+      <!-- <div class='hero-image'>
           {
             heroImage && (
               <Image width={1020} height={510} src={heroImage} alt='' />
             )
           }
         </div> -->
-          <div class='prose'>
-            <div class='title'>
-              <div class='date'>
-                <FormattedDate date={pubDate} />
-                {
-                  updatedDate && (
-                    <div class='last-updated-on'>
-                      Last updated on <FormattedDate date={updatedDate} />
-                    </div>
-                  )
-                }
-              </div>
-              <h1>{title}</h1>
-              <hr />
-            </div>
-            <slot />
+      <div class='prose'>
+        <div class='title'>
+          <div class='date'>
+            <FormattedDate date={pubDate} />
+            {
+              updatedDate && (
+                <div class='last-updated-on'>
+                  Last updated on <FormattedDate date={updatedDate} />
+                </div>
+              )
+            }
           </div>
-        </article>
-      </main>
-      <Footer />
-      <BackToTop client:load />
-    </div>
+          <h1>{title}</h1>
+          <hr />
+        </div>
+        <slot />
+      </div>
+    </article>
+  </main>
+  <BackToTop client:load />
+</Layout>
 
-    <script>
-      const toc = document.getElementById('toc')
-      const body = document.body
+<script>
+  const toc = document.getElementById('toc')
+  const body = document.body
 
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-          body.classList.add('scrolled')
-        } else {
-          body.classList.remove('scrolled')
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      body.classList.add('scrolled')
+    } else {
+      body.classList.remove('scrolled')
+    }
+  })
+
+  if (toc) {
+    const links = toc.querySelectorAll('a')
+    const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6')
+
+    const observerOptions = {
+      rootMargin: '-100px 0% 0%',
+      threshold: 0,
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const id = entry.target.id
+        const activeLink = Array.from(links).find(
+          link => link.getAttribute('data-slug') === id,
+        )
+        if (activeLink) {
+          if (entry.isIntersecting) {
+            activeLink.classList.add('active')
+            // 确保高亮的元素在可见区域内
+            const tocRect = toc.getBoundingClientRect()
+            const linkRect = activeLink.getBoundingClientRect()
+
+            if (linkRect.top < tocRect.top) {
+              toc.scrollTop += linkRect.top - tocRect.top - linkRect.height
+            } else if (linkRect.bottom > tocRect.bottom) {
+              toc.scrollTop +=
+                linkRect.bottom - tocRect.bottom + linkRect.height
+            }
+          } else {
+            activeLink.classList.remove('active')
+          }
         }
       })
+    }, observerOptions)
 
-      if (toc) {
-        const links = toc.querySelectorAll('a')
-        const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6')
+    headings.forEach(heading => {
+      observer.observe(heading)
+    })
 
-        const observerOptions = {
-          rootMargin: '-100px 0% 0%',
-          threshold: 0,
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault()
+        const targetId = link.getAttribute('href')?.slice(1)
+        const targetElement = document.getElementById(targetId ?? '')
+        if (targetElement) {
+          const offset = 80
+          const elementPosition = targetElement.getBoundingClientRect().top
+          const offsetPosition = elementPosition + window.pageYOffset - offset
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth',
+          })
         }
-
-        const observer = new IntersectionObserver(entries => {
-          entries.forEach(entry => {
-            const id = entry.target.id
-            const activeLink = Array.from(links).find(
-              link => link.getAttribute('data-slug') === id,
-            )
-            if (activeLink) {
-              if (entry.isIntersecting) {
-                activeLink.classList.add('active')
-                // 确保高亮的元素在可见区域内
-                const tocRect = toc.getBoundingClientRect()
-                const linkRect = activeLink.getBoundingClientRect()
-
-                if (linkRect.top < tocRect.top) {
-                  toc.scrollTop += linkRect.top - tocRect.top - linkRect.height
-                } else if (linkRect.bottom > tocRect.bottom) {
-                  toc.scrollTop +=
-                    linkRect.bottom - tocRect.bottom + linkRect.height
-                }
-              } else {
-                activeLink.classList.remove('active')
-              }
-            }
-          })
-        }, observerOptions)
-
-        headings.forEach(heading => {
-          observer.observe(heading)
-        })
-
-        links.forEach(link => {
-          link.addEventListener('click', e => {
-            e.preventDefault()
-            const targetId = link.getAttribute('href')?.slice(1)
-            const targetElement = document.getElementById(targetId ?? '')
-            if (targetElement) {
-              const offset = 80
-              const elementPosition = targetElement.getBoundingClientRect().top
-              const offsetPosition =
-                elementPosition + window.pageYOffset - offset
-
-              window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth',
-              })
-            }
-          })
-        })
-      }
-    </script>
-  </body>
-</html>
+      })
+    })
+  }
+</script>
 
 <style>
   main {

@@ -4,7 +4,6 @@
   --text-secondary: #6b6f72;
   --primary: #548e9b;
   --primary-hover: #426b78;
-  --black: #1d292f;
   --primary-gray: #689ea8;
   --primary-light: #dfecee;
   --primary-dark: #304149;
@@ -13,6 +12,7 @@
   --font-family-serif: Merriweather, serif;
   --font-family-sans-code: 'Roboto Mono', sans-serif;
   --font-family-sans: 'MiSans', 'Roboto Mono', 'Fira Sans', sans-serif;
+  --black: #1d292f;
 }
 
 :root.theme-dark {
@@ -59,7 +59,12 @@
   scroll-behavior: smooth;
   transition: color 0.3s ease;
   transition: background-color 0.3s ease;
-  font-size: 1vmax;
+  font-size: 2vmin;
+  -webkit-user-drag: none;
+}
+
+::selection {
+  background: var(--primary);
 }
 
 html {
@@ -176,10 +181,13 @@ p a:hover {
 img {
   max-width: 100%;
   height: auto;
+  pointer-events: none;
+  -webkit-user-drag: none;
 }
 
 img,
-.banner {
+.banner,
+a * {
   user-select: none;
   -webkit-user-select: none;
 }
@@ -308,6 +316,11 @@ td {
 }
 
 
+@media screen and (max-aspect-ratio: 3 / 2) {
+  * {
+    font-size: 1vmax;
+  }
+}
 
 @media (max-width: 1020px) {
   h1 {

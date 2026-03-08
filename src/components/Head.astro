@@ -34,23 +34,35 @@ const { title, description, image = FallbackImage } = Astro.props
 <!-- Font preloads -->
 <link
   rel='preload'
-  href='/fonts/Merriweather_24pt-Regular.ttf'
+  href='/fonts/FiraSans-Regular-subset.woff2'
   as='font'
   crossorigin
 />
 <link
   rel='preload'
-  href='/fonts/Merriweather_24pt-SemiBold.ttf'
+  href='/fonts/Merriweather_24pt-Regular-subset.woff2'
   as='font'
   crossorigin
 />
 <link
   rel='preload'
-  href='/fonts/RobotoMono-VariableFont_wght.ttf'
+  href='/fonts/Merriweather_24pt-SemiBold-subset.woff2'
   as='font'
   crossorigin
 />
-<link rel='preload' href='/fonts/MiSans VF.ttf' as='font' crossorigin />
+<link
+  rel='preload'
+  href='/fonts/RobotoMono-VariableFont_wght-subset.woff2'
+  as='font'
+  crossorigin
+/>
+<link
+  rel='preload'
+  href='/fonts/MiSans VF-subset.woff2'
+  as='font'
+  crossorigin
+/>
+<link rel='preload' href='/fonts/unicode.impact.woff' as='font' crossorigin />
 
 <!-- Canonical URL -->
 <link rel='canonical' href={canonicalURL} />

@@ -1,108 +1,15 @@
 ---
 import Carousel from '@/components/Carousel.svelte'
-import Layout from '../layouts/Layout.astro'
+import WavyLines from '@/components/WavyLines.svelte'
+import Welcome from '@/components/Welcome.svelte'
+import Layout from '@/layouts/Layout.astro'
 
 const title = "Kino's Blog"
 const description = 'A personal blog by Kino'
 ---
 
-<Layout
-  title={title}
-  description={description}
-  footerStyle='background: transparent'
->
-  <div class='background'></div>
-  <div class='home-container'>
-    <div class='home-copy'>
-      <h1>Flokroll</h1>
-      <p>Learn more <a href='/about'>about me -></a></p>
-    </div>
-  </div>
+<Layout title={title} description={description}>
+  <Welcome />
+  <Carousel client:only />
+  <WavyLines client:only />
 </Layout>
-
-<Carousel client:only />
-<style>
-  .background {
-    min-height: 100dvh;
-    background-image:
-      linear-gradient(var(--bgi-gradient)), url('/assets/hero-image.png');
-    object-fit: fill;
-    background-size: cover;
-    background-position: center;
-    width: 100dvw;
-
-    position: absolute;
-    left: 0%;
-    right: 0%;
-    top: 0%;
-    bottom: 0%;
-    z-index: -1;
-  }
-  .home-container {
-    align-items: center;
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    margin: 2em 0;
-    min-height: 400px;
-  }
-
-  .home-copy {
-    flex: 1;
-    padding: 0 1em;
-  }
-
-  .home-copy h1 {
-    font-weight: 700;
-    margin-bottom: 0.5em;
-    line-height: 1.3;
-  }
-
-  .home-copy p {
-    font-size: 1.4em;
-  }
-
-  .hero-image-container {
-    margin: 0 1em;
-    text-align: center;
-  }
-
-  .hero-image-container picture {
-    display: block;
-    min-height: 250px;
-  }
-
-  .caption {
-    font-size: 0.8em;
-    font-style: italic;
-    text-align: left;
-  }
-
-  .hero-image {
-    width: 100%;
-    max-width: 550px;
-    margin-bottom: 1em;
-  }
-
-  @media (max-width: 1200px) {
-    p {
-      font-size: 1.2em;
-    }
-
-    .hero-image {
-      max-width: 400px;
-    }
-  }
-
-  @media (max-width: 800px) {
-    .home-container {
-      flex-direction: column;
-    }
-
-    .home-copy {
-      flex: 0;
-      padding-bottom: 2em;
-      text-align: center;
-    }
-  }
-</style>

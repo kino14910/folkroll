@@ -1,0 +1,134 @@
+
+---
+import Footer from '@/components/Footer.astro'
+import Head from '@/components/Head.astro'
+import Header from '@/components/Header.astro'
+import heroImage from '@/assets/cg_rm18_0103.webp'
+import FormattedDate from '@/components/FormattedDate.astro'
+import { Image } from 'astro:assets'
+
+export interface Props {
+  title: string
+  description: string
+  posts: Array<{
+    id: string
+    data: {
+      title: string
+      pubDate: Date
+      heroImage?: ImageMetadata
+    }
+  }>
+  basePath: string
+  showImage?: boolean
+  showDate?: boolean
+}
+
+const { title, description, posts, basePath, showImage = true, showDate = true } = Astro.props
+---
+
+<html lang='en'>
+  <head>
+    <Head title={title} description={description} />
+  </head>
+  <body>
+    <div class='layout'>
+      <Header />
+
+      <main>
+        <section>
+          <ul>
+            {
+              posts.map(post => (
+                <li>
+                  <a href={`/${basePath}/${post.id}/`}>
+                    {showImage && (
+                      <Image
+                        width={720}
+                        height={360}
+                        src={post.data.heroImage ?? heroImage}
+                        alt=''
+                      />
+                    )}
+                    <h6 class='title'>{post.data.title}</h6>
+                    {showDate && (
+                      <p class='date'>
+                        <FormattedDate date={post.data.pubDate} />
+                      </p>
+                    )}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  </body>
+</html>
+
+<style>
+  .layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    position: relative;
+  }
+
+  main {
+    flex: 1;
+    margin: 0 auto;
+    max-width: 1400px;
+    padding: 1em 2em;
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 1rem;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  ul li {
+    width: 100%;
+  }
+  ul li * {
+    text-decoration: none;
+    transition: 0.2s ease;
+  }
+  ul li img {
+    margin-bottom: 0.5rem;
+    border-radius: 12px;
+  }
+  ul li a {
+    display: block;
+  }
+  .title {
+    margin: 0;
+    color: var(--text-main);
+    line-height: 1;
+  }
+  .date {
+    margin: 0;
+    color: var(--primary-gray);
+  }
+  ul li a:hover h6,
+  ul li a:hover .date {
+    color: var(--primary);
+  }
+  @media (max-width: 720px) {
+    ul {
+      gap: 0.5em;
+    }
+    ul li {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
