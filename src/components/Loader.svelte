@@ -1,7 +1,7 @@
 <script>
   import gsap from 'gsap'
 
-  const DURATION = 1
+  const DURATION = 1.4
 
   $effect(() => {
     const tl = gsap.timeline({
@@ -90,7 +90,7 @@
   .logo-svg path {
     stroke-dasharray: 81px 100px;
     stroke-dashoffset: -99px;
-    animation: snake 2.4s linear infinite;
+    animation: snake 2s linear infinite;
   }
 
   @keyframes snake {
