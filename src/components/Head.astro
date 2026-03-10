@@ -2,6 +2,7 @@
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
 import type { ImageMetadata } from 'astro'
+import { ClientRouter } from 'astro:transitions'
 import FallbackImage from '../assets/cg_rm18_0103.webp'
 import { SITE_TITLE } from '../consts'
 import '../styles/fonts.css'
@@ -85,3 +86,19 @@ const { title, description, image = FallbackImage } = Astro.props
 <meta property='twitter:title' content={title} />
 <meta property='twitter:description' content={description} />
 <meta property='twitter:image' content={new URL(image.src, Astro.url)} />
+
+<ClientRouter />
+
+<!-- This is intentionally inlined to avoid FOUC -->
+<script is:inline>
+  const root = document.documentElement
+  const theme = localStorage.getItem('theme')
+  if (
+    theme === 'dark' ||
+    (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  ) {
+    root.classList.add('theme-dark')
+  } else {
+    root.classList.remove('theme-dark')
+  }
+</script>

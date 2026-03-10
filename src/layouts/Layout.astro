@@ -2,6 +2,7 @@
 import Footer from '@/components/Footer.astro'
 import Head from '@/components/Head.astro'
 import Header from '@/components/Header.astro'
+import Loader from '@/components/Loader.svelte'
 import ScrollBar from '@/components/ScrollBar.svelte'
 import 'lenis/dist/lenis.css'
 
@@ -17,18 +18,12 @@ const { title, description } = Astro.props
     <Head title={title} description={description} />
   </head>
   <body>
-    <ScrollBar client:only />
-    <Header />
-    <slot />
-    <Footer />
+    <div class='layout'>
+      <Loader client:only />
+      <ScrollBar client:only />
+      <Header />
+      <slot />
+      <Footer />
+    </div>
   </body>
 </html>
-
-<style>
-  .layout {
-    display: flex;
-    flex-direction: column;
-    min-height: min-content;
-    position: relative;
-  }
-</style>

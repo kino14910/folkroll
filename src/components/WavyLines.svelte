@@ -132,12 +132,13 @@
     updatePhysics(time)
     rafId = requestAnimationFrame(tick)
   }
-
-  const onMouseMove = e => {
+  const updateMousePosition = (pageX, pageY) => {
     if (!container) return
     const rect = container.getBoundingClientRect()
-    mouse.x = e.pageX - rect.left
-    mouse.y = e.pageY - (rect.top + window.scrollY)
+
+    // 计算相对于容器的坐标，并考虑页面滚动
+    mouse.x = pageX - rect.left
+    mouse.y = pageY - (rect.top + window.scrollY)
 
     if (!mouse.set) {
       mouse.sx = mouse.lx = mouse.x
@@ -145,10 +146,25 @@
       mouse.set = true
     }
   }
+  const onMouseMove = e => {
+    updateMousePosition(e.pageX, e.pageY)
+  }
+
+  const onTouchMove = e => {
+    if (e.cancelable) e.preventDefault()
+
+    const touch = e.touches[0]
+    updateMousePosition(
+      touch.clientX + window.scrollX,
+      touch.clientY + window.scrollY,
+    )
+  }
 
   $effect(() => {
     setSize()
-    setLines()
+    if (width > 0 && height > 0) {
+      setLines()
+    }
     rafId = requestAnimationFrame(tick)
 
     return () => {
@@ -160,7 +176,10 @@
 <div
   bind:this={container}
   class="home-wavy-lines"
+  bind:clientWidth={width}
+  bind:clientHeight={height}
   onmousemove={onMouseMove}
+  ontouchmove={onTouchMove}
   role="presentation"
 >
   <div
@@ -183,6 +202,7 @@
     height: 60dvh;
     background-color: var(--bg-color);
     overflow: hidden;
+    touch-action: none;
   }
 
   .pointer-dot {

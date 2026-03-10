@@ -1,7 +1,5 @@
 ---
-import Footer from '@/components/Footer.astro'
-import Head from '@/components/Head.astro'
-import Header from '@/components/Header.astro'
+import Layout from '@/layouts/Layout.astro'
 import BlogLink from './BlogLink.svelte'
 
 export interface Props {
@@ -30,21 +28,14 @@ const {
 } = Astro.props
 ---
 
-<html lang='en'>
-  <head>
-    <Head title={title} description={description} />
-  </head>
-  <body>
-    <div class='layout'>
-      <Header />
-
-      <main>
-        <section>
-          <ul>
-            {
-              posts.map(post => (
-                <li>
-                  {/* <a href={`/${basePath}/${post.id}/`}>
+<Layout title={title} description={description}>
+  <main>
+    <section>
+      <ul>
+        {
+          posts.map(post => (
+            <li>
+              {/* <a href={`/${basePath}/${post.id}/`}>
                     {showImage && (
                       <Image
                         width={720}
@@ -60,32 +51,28 @@ const {
                       </p>
                     )}
                   </a> */}
-                  <BlogLink
-                    url={`/${basePath}/${post.id}/`}
-                    title={post.data.title}
-                    showDate={showDate}
-                    pubDate={post.data.pubDate}
-                  />
-                </li>
-              ))
-            }
-          </ul>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
-  </body>
-</html>
+              <BlogLink
+                url={`/${basePath}/${post.id}/`}
+                title={post.data.title}
+                showDate={showDate}
+                pubDate={post.data.pubDate}
+              />
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</Layout>
 
 <style>
-  .layout {
+  :global(.layout) {
     display: flex;
     flex-direction: column;
     min-height: 100dvh;
+    height: min-content;
     position: relative;
   }
-
   main {
     flex: 1;
     margin: 0 auto;

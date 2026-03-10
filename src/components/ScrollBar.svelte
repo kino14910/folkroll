@@ -1,115 +1,111 @@
 <script>
   import Lenis from 'lenis'
-  import { untrack } from 'svelte'
 
   let { minThumbHeight = 40, hoverToShow = false } = $props()
 
-  // --- 状态 ---
   let scrollProgress = $state(0)
   let containerHeight = $state(0)
   let contentHeight = $state(0)
   let isDragging = $state(false)
+  let isScrolling = $state(false)
   let isHovered = $state(false)
 
   let lenis = $state(null)
   let dragStart = { y: 0, progress: 0 }
+  let scrollingTimeout
 
-  // --- 派生计算 ---
   let heightRatio = $derived(
     contentHeight > 0 ? containerHeight / contentHeight : 1,
   )
-
   let thumbHeight = $derived(
     Math.max(minThumbHeight, heightRatio * containerHeight),
   )
-
-  // 滑块可移动的总空间（容器高度 - 滑块高度）
   let trackSpace = $derived(containerHeight - thumbHeight)
-
   let thumbTop = $derived(scrollProgress * trackSpace)
-
   let hideTrack = $derived(heightRatio >= 1)
 
   $effect(() => {
-    // 1. 初始化 Lenis
     const lenisInstance = new Lenis({
       autoRaf: true,
       smoothWheel: true,
     })
 
     lenisInstance.on('scroll', e => {
-      untrack(() => {
-        scrollProgress = e.progress
-        window.scrollProgress = e.progress
-        window.scrollY = e.scroll
-      })
+      scrollProgress = e.progress
+
+      isScrolling = true
+      clearTimeout(scrollingTimeout)
+      scrollingTimeout = setTimeout(() => {
+        isScrolling = false
+      }, 100)
     })
 
-    // 2. 监测高度变化
+    const onNativeScroll = () => {
+      if (isDragging) return
+
+      const scrollTop = window.scrollY || document.documentElement.scrollTop
+      const maxScroll =
+        document.documentElement.scrollHeight - window.innerHeight
+
+      if (maxScroll > 0) {
+        scrollProgress = scrollTop / maxScroll
+
+        isScrolling = true
+        clearTimeout(scrollingTimeout)
+        scrollingTimeout = setTimeout(() => {
+          isScrolling = false
+        }, 100)
+      }
+    }
+
+    window.addEventListener('scroll', onNativeScroll, { passive: true })
+
     const resizeObserver = new ResizeObserver(() => {
-      untrack(() => {
-        containerHeight = window.innerHeight
-        contentHeight = document.body.scrollHeight
-        window.maxScrollTop = contentHeight - containerHeight
-      })
+      containerHeight = window.innerHeight
+      contentHeight = document.documentElement.scrollHeight
     })
+    resizeObserver.observe(document.documentElement)
 
-    resizeObserver.observe(document.body)
     lenis = lenisInstance
-    window.lenis = lenisInstance
 
     return () => {
       lenisInstance.destroy()
       resizeObserver.disconnect()
-      window.lenis = null
+      window.removeEventListener('scroll', onNativeScroll)
+      clearTimeout(scrollingTimeout)
     }
   })
 
-  // --- 交互逻辑 ---
-
-  // 点击滑道跳转
-  function onTrackMouseDown(e) {
-    // 如果点击的是滑块本身，则交给 onDragStart 处理
-    if (e.target.classList.contains('thumb')) return
-
-    const clickY = e.clientY
-    // 计算目标进度，使滑块中心对齐点击位置
-    const targetProgress = (clickY - thumbHeight / 2) / trackSpace
-    const clampedProgress = Math.max(0, Math.min(1, targetProgress))
-
-    // 触发平滑滚动
-    lenis?.scrollTo(clampedProgress * (contentHeight - containerHeight))
+  function getClientY(e) {
+    return e.touches ? e.touches[0].clientY : e.clientY
   }
 
   function onDragStart(e) {
     isDragging = true
-    const clientY = e.clientY || e.touches?.[0].clientY
-    dragStart.y = clientY
+    isScrolling = true
+    dragStart.y = getClientY(e)
     dragStart.progress = scrollProgress
-    // 阻止冒泡，防止触发 track 的点击事件
-    e.stopPropagation()
-    e.preventDefault()
+    if (e.cancelable) e.preventDefault()
   }
 
   function handleGlobalMove(e) {
     if (!isDragging || !lenis) return
-    const clientY = e.clientY || e.touches?.[0].clientY
-
-    const deltaY = clientY - dragStart.y
+    const deltaY = getClientY(e) - dragStart.y
     const progressDelta = deltaY / trackSpace
+    let targetProgress = Math.max(
+      0,
+      Math.min(1, dragStart.progress + progressDelta),
+    )
 
-    let targetProgress = dragStart.progress + progressDelta
-    targetProgress = Math.max(0, Math.min(1, targetProgress))
-
-    // 拖拽时使用 immediate 保证物理对齐
-    const targetScroll = targetProgress * (contentHeight - containerHeight)
-    lenis.scrollTo(targetScroll, { immediate: true })
-
+    lenis.scrollTo(targetProgress * (contentHeight - containerHeight), {
+      immediate: true,
+    })
     scrollProgress = targetProgress
   }
 
   function handleGlobalUp() {
     isDragging = false
+    isScrolling = false
   }
 </script>
 
@@ -122,25 +118,28 @@
 
 <div
   class="track-container"
-  class:is-dragging={isDragging}
-  class:is-hovered={isHovered}
+  class:is-active={isDragging || isScrolling || isHovered}
   class:hover-show={hoverToShow}
   class:hide={hideTrack}
   onmouseenter={() => (isHovered = true)}
   onmouseleave={() => (isHovered = false)}
-  onmousedown={onTrackMouseDown}
   role="scrollbar"
-  aria-controls="content"
-  aria-valuenow={scrollProgress * 100}
+  aria-controls="main-content"
+  aria-orientation="vertical"
+  aria-valuenow={Math.round(scrollProgress * 100)}
+  tabindex="-1"
 >
   <div class="track">
     <div
       class="thumb"
+      class:no-transition={isScrolling || isDragging}
       onmousedown={onDragStart}
       ontouchstart={onDragStart}
       style="height: {thumbHeight}px; transform: translateY({thumbTop}px);"
       role="slider"
-      aria-valuenow={scrollProgress * 100}
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow={Math.round(scrollProgress * 100)}
       tabindex="-1"
     ></div>
   </div>
@@ -149,7 +148,8 @@
 <style>
   .track-container {
     --scrollbar-width: 16px;
-    --thumb-bg: #888;
+    --thumb-visible-width: 8px;
+    --thumb-bg: rgba(136, 136, 136, 0.4);
     --thumb-bg-active: #555;
 
     position: fixed;
@@ -158,66 +158,63 @@
     height: 100vh;
     width: var(--scrollbar-width);
     z-index: 9999;
-    display: flex;
-    flex-direction: column;
     background: transparent;
-    transition:
-      background 0.2s,
-      opacity 0.3s;
     user-select: none;
-  }
-
-  .track-container.is-hovered,
-  .track-container.is-dragging {
-    background: rgba(0, 0, 0, 0.05);
+    touch-action: pan-y;
+    transition: opacity 0.3s;
   }
 
   .hover-show {
     opacity: 0;
   }
-  .track-container:hover,
-  .is-dragging {
+
+  .is-active {
     opacity: 1;
   }
 
   .track {
-    flex: 1;
     position: relative;
+    height: 100%;
     width: 100%;
   }
 
   .thumb {
     position: absolute;
-    left: 4px;
-    width: 8px;
+    left: 50%;
+    width: var(--thumb-visible-width);
     background: var(--thumb-bg);
     border-radius: 10px;
     cursor: grab;
-    will-change: transform;
-    transition:
-      width 0.15s,
-      left 0.15s,
-      background 0.15s,
-      height 0.15s;
-  }
-
-  .track-container:not(.is-dragging) .thumb {
+    translate: -50% 0;
+    /* 默认有平滑过渡，用于点击滑道跳转等场景 */
     transition:
       transform 0.2s cubic-bezier(0.23, 1, 0.32, 1),
       width 0.15s,
-      left 0.15s,
       background 0.15s;
+    will-change: transform;
+  }
+
+  /* 核心修复：滚动或拖拽时，立即禁用过渡，实现实时跟随 */
+  .thumb.no-transition {
+    transition:
+      width 0.15s,
+      background 0.15s !important;
+  }
+
+  .thumb::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 100%;
   }
 
   .track-container:hover .thumb,
-  .is-dragging .thumb {
-    width: 12px;
-    left: 2px;
+  .is-active .thumb {
     background: var(--thumb-bg-active);
-  }
-
-  .is-dragging .thumb {
-    cursor: grabbing;
+    width: calc(var(--thumb-visible-width) + 2px);
   }
 
   .hide {
