@@ -8,9 +8,9 @@
 	let state: MusicPlayerState = musicPlayerStore.getState();
 	let unsubscribe: (() => void) | undefined;
 
-	function toggleControlCenter() {
-		musicPlayerStore.toggleExpanded();
-	}
+	const popoverSupported =
+		typeof HTMLElement !== "undefined" &&
+		"popover" in HTMLElement.prototype;
 
 	$: currentSongTitle = state.currentSong?.title || "音乐控制中心";
 	$: ariaLabel = state.isExpanded
@@ -24,6 +24,26 @@
 		unsubscribe = musicPlayerStore.subscribe((nextState) => {
 			state = nextState;
 		});
+
+		if (popoverSupported) {
+			const panel = document.getElementById("fab-music-panel");
+			if (panel) {
+				panel.addEventListener("toggle", ((e: ToggleEvent) => {
+					if (e.newState === "open") {
+						musicPlayerStore.expand();
+					} else {
+						musicPlayerStore.collapse();
+					}
+				}) as EventListener);
+			}
+		} else {
+			const btn = document.getElementById("music-fab-btn");
+			if (btn) {
+				btn.addEventListener("click", () => {
+					musicPlayerStore.toggleExpanded();
+				});
+			}
+		}
 	});
 
 	onDestroy(() => {
@@ -32,6 +52,7 @@
 </script>
 
 <button
+	id="music-fab-btn"
 	type="button"
 	class:active={state.isExpanded}
 	class:playing={state.isPlaying}
@@ -39,7 +60,7 @@
 	class="music-fab btn-card"
 	aria-label={ariaLabel}
 	title={ariaLabel}
-	on:click={toggleControlCenter}
+	popovertarget="fab-music-panel"
 >
 	<span class="music-fab__icon" aria-hidden="true">
 		<Icon icon={statusIcon} />
@@ -52,6 +73,7 @@
 
 <style>
 	.music-fab {
+		anchor-name: --music-fab-anchor;
 		position: relative;
 		display: inline-flex;
 		align-items: center;

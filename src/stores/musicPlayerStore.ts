@@ -522,12 +522,28 @@ class MusicPlayerStore {
 
 	toggleExpanded(): void {
 		this.state.isExpanded = !this.state.isExpanded;
-		// 保持与原先 usePlayerState.toggleExpandedUI 一致的联动行为：
-		// 展开时强制取消隐藏，并关闭播放列表，避免状态组合异常
 		if (this.state.isExpanded) {
 			this.state.showPlaylist = false;
 			this.state.isHidden = false;
 		}
+		this.broadcastState();
+	}
+
+	expand(): void {
+		if (this.state.isExpanded) {
+			return;
+		}
+		this.state.isExpanded = true;
+		this.state.showPlaylist = false;
+		this.state.isHidden = false;
+		this.broadcastState();
+	}
+
+	collapse(): void {
+		if (!this.state.isExpanded) {
+			return;
+		}
+		this.state.isExpanded = false;
 		this.broadcastState();
 	}
 

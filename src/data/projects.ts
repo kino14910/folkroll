@@ -21,7 +21,7 @@ export interface Project {
 export const projectsData: Project[] = [
 	{
 		id: "folkroll",
-		title: "Folkroll Blog",
+		title: "Interactive Blog System",
 		description:
 			"A personal blog and knowledge management system built with Astro + Svelte, featuring MDX content, RSS, and advanced interactive UI components.",
 		image: "",
@@ -45,9 +45,9 @@ export const projectsData: Project[] = [
 		techStack: ["Next.js", "React", "NextAuth", "Supabase"],
 		status: "completed",
 		sourceCode: "https://github.com/kino14910/the-wild-oasis-client",
-		visitUrl: "https://the-wild-oasis-client.vercel.app/",
-		startDate: "2026-01-01",
-		endDate: "2026-02-01",
+		visitUrl: "https://the-wild-oasis-client-kino.vercel.app/",
+		startDate: "2026-03-01",
+		endDate: "2026-03-16",
 		featured: true,
 		tags: ["Fullstack", "Booking", "SaaS"],
 	},

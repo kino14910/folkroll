@@ -71,6 +71,8 @@
 </script>
 
 <div
+	id="fab-music-panel"
+	popover="auto"
 	class="fab-music-panel card-base shadow-xl rounded-2xl p-4 w-[20rem] max-w-[80vw]"
 >
 	<div class="fab-music-header">
@@ -119,6 +121,11 @@
 
 <style>
 	.fab-music-panel {
+		position-anchor: --music-fab-anchor;
+		position-area: block-start span-inline-end;
+		position-try-fallbacks: block-start span-inline-end;
+		margin: 0.5rem;
+
 		border-radius: 1.25rem;
 		backdrop-filter: blur(12px);
 		-webkit-backdrop-filter: blur(12px);
@@ -135,6 +142,25 @@
 		align-items: center;
 		gap: 0.8rem;
 		margin-bottom: 0.75rem;
+	}
+
+	@supports not (position-anchor: --music-fab-anchor) {
+		.fab-music-panel {
+			position: fixed;
+			right: var(--fab-group-right, 1.5rem);
+			bottom: calc(
+				var(--fab-group-bottom, 10rem) +
+					(
+						var(--fab-button-size, 3rem) *
+							var(--fab-visible-count, 1)
+					) +
+					(
+						var(--fab-group-gap, 0.5rem) *
+							(var(--fab-visible-count, 1) - 1)
+					) +
+					0.75rem
+			);
+		}
 	}
 
 	@media (max-width: 640px) {
