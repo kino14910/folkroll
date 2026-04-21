@@ -1,26 +1,26 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte'
 
-	import Key from '../../../../i18n/i18nKey'
-	import { i18n } from '../../../../i18n/translation'
+	import Key from '@i18n/i18nKey'
+	import { i18n } from '@i18n/translation'
 	import CoverImage from '../atoms/CoverImage.svelte'
 	import TrackInfo from '../atoms/TrackInfo.svelte'
 	import type { Song } from '../types'
 
 	interface Props {
-		song: Song;
-		currentTime: number;
-		duration: number;
-		isPlaying: boolean;
-		isLoading: boolean;
-		size?: 'mini' | 'expanded';
-		showControls?: boolean;
-		showPlaylist?: boolean;
-		onCoverClick?: () => void;
-		onInfoClick?: () => void;
-		onHideClick?: () => void;
-		onExpandClick?: () => void;
-		onPlaylistClick?: () => void;
+		song: Song
+		currentTime: number
+		duration: number
+		isPlaying: boolean
+		isLoading: boolean
+		size?: 'mini' | 'expanded'
+		showControls?: boolean
+		showPlaylist?: boolean
+		onCoverClick?: () => void
+		onInfoClick?: () => void
+		onHideClick?: () => void
+		onExpandClick?: () => void
+		onPlaylistClick?: () => void
 	}
 
 	const {
@@ -57,7 +57,7 @@
 		<div
 			class="flex-1 min-w-0 cursor-pointer"
 			onclick={onInfoClick}
-			onkeydown={(e) => {
+			onkeydown={e => {
 				if (e.key === 'Enter' || e.key === ' ') {
 					e.preventDefault()
 					onInfoClick?.()
@@ -72,7 +72,7 @@
 		<div class="flex items-center gap-1">
 			<button
 				class="btn-plain w-8 h-8 rounded-lg flex items-center justify-center"
-				onclick={(e) => {
+				onclick={e => {
 					e.stopPropagation()
 					onHideClick?.()
 				}}
@@ -82,7 +82,7 @@
 			</button>
 			<button
 				class="btn-plain w-8 h-8 rounded-lg flex items-center justify-center"
-				onclick={(e) => {
+				onclick={e => {
 					e.stopPropagation()
 					onExpandClick?.()
 				}}
