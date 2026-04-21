@@ -163,7 +163,7 @@
 		}
 	}
 
-	@media (width <= 640px) {
+	@media (width < 640px) {
 		.fab-music-panel {
 			padding: 0.9rem 0.85rem 0.9rem 0.9rem;
 			border-radius: 1rem;

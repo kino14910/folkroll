@@ -104,7 +104,7 @@
 		flex-shrink: 0;
 	}
 
-	@media (width <= 520px) {
+	@media (width < 520px) {
 		.controls-row {
 			gap: 0.15rem;
 			padding-inline: 0;

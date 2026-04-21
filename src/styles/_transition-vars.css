@@ -11,7 +11,7 @@
   --transition-stagger: 35ms;
 }
 
-@media (width <= 768px) {
+@media (width < 768px) {
   :root {
     --transition-translate: 0.5rem;
     --transition-duration: 150ms;

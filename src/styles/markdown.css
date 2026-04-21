@@ -3,7 +3,7 @@
 .custom-md {
   * {
     letter-spacing: 0.1ch;
-    font-family: asciiFont, cjkFont
+    font-family: Misans;
   }
 
   /* h1 {

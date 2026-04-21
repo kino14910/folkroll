@@ -218,8 +218,8 @@ export const siteConfig: SiteConfig = {
 		},
 		cjkFont: {
 			// 中日韩字体 - 作为回退字体
-			fontFamily: 'Roboto, MiSans',
-			fontWeight: '500',
+			fontFamily: 'MiSans',
+			fontWeight: '400',
 			localFonts: ['MiSans VF-subset.woff2'],
 			enableCompress: true, // 启用字体子集优化，减少字体文件大小
 		},

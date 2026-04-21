@@ -433,7 +433,7 @@
 			transition: transform 0.2s ease;
 		}
 
-		@media (width <= 768px) {
+		@media (width < 768px) {
 			.music-player {
 				width: 280px !important;
 				min-width: 280px !important;
@@ -472,7 +472,7 @@
 			}
 		}
 
-		@media (width <= 480px) {
+		@media (width < 480px) {
 			.music-player {
 				width: 260px !important;
 				min-width: 260px !important;

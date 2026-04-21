@@ -214,7 +214,9 @@ if (siteConfig.font) {
 		style={bodyFontFamily ? `font-family: ${bodyFontFamily};` : ''}
 		data-overlayscrollbars-initialize
 	>
-		<PageLoader client:only />
+		<div transition:persist='loader'>
+			<PageLoader client:only />
+		</div>
 		<noscript
 			><iframe
 				src='https://www.googletagmanager.com/ns.html?id=GTM-KRX3XGVH'
@@ -240,10 +242,6 @@ if (siteConfig.font) {
 
 		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->
 		<div id='page-height-extend' class='hidden h-[300vh]'></div>
-
-		<!-- <div transition:persist="loader">
-			<PageLoader client:load />
-		</div> -->
 	</body>
 </html>
 

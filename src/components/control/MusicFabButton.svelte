@@ -161,7 +161,7 @@
 		}
 	}
 
-	@media (width <= 768px) {
+	@media (width < 768px) {
 		.music-fab {
 			border-radius: 0.75rem;
 		}
@@ -171,7 +171,7 @@
 		}
 	}
 
-	@media (width <= 480px) {
+	@media (width < 480px) {
 		.music-fab {
 			border-radius: 0.5rem;
 		}

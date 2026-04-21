@@ -1089,7 +1089,7 @@ body.theme-high-contrast .preview-content pre code {
 }
 
 /* ========== Responsive ========== */
-@media (width <= 1280px) {
+@media (width < 1280px) {
   .module-panel {
     width: 240px;
     min-width: 240px;
@@ -1100,7 +1100,7 @@ body.theme-high-contrast .preview-content pre code {
   }
 }
 
-@media (width <= 768px) {
+@media (width < 768px) {
   .module-panel {
     position: fixed;
     left: 0;
@@ -1139,7 +1139,7 @@ body.theme-high-contrast .preview-content pre code {
   }
 }
 
-@media (width <= 480px) {
+@media (width < 480px) {
   .toolbar {
     padding: 0 6px;
     gap: 4px;

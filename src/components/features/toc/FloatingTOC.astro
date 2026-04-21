@@ -108,7 +108,7 @@ const useJapaneseBadge = siteConfig.toc.useJapaneseBadge
 		border-radius: 2px;
 	}
 
-	@media (width <= 768px) {
+	@media (width < 768px) {
 		.floating-toc-panel {
 			width: 85vw;
 			max-width: 20rem;
@@ -188,12 +188,12 @@ const useJapaneseBadge = siteConfig.toc.useJapaneseBadge
 
 <script>
 	import { findActiveHeadingIndex } from './hooks/useTocHighlight'
-	import { throttle } from './hooks/useTocScroll'
-	import {
-		generateTOCItems,
-		getTOCConfig,
-		scrollToHeading,
-	} from './utils/toc-utils'
+import { throttle } from './hooks/useTocScroll'
+import {
+	generateTOCItems,
+	getTOCConfig,
+	scrollToHeading,
+} from './utils/toc-utils'
 
 	interface FloatingTOCState {
 		btn: HTMLElement | null

@@ -4,6 +4,7 @@
 	type Phase = 'entering' | 'covering' | 'exiting' | 'done'
 
 	let phase: Phase = $state('covering')
+	let animationKey = $state(0)
 
 	const HOLD_DURATION = 400
 	const EXIT_DURATION = 800
@@ -32,11 +33,20 @@
 	function onNavigationStart() {
 		clearTimers()
 		document.body.style.overflow = 'hidden'
-		phase = 'entering'
+
+		phase = 'done'
+
+		animationKey += 1
 
 		requestAnimationFrame(() => {
 			requestAnimationFrame(() => {
-				phase = 'covering'
+				phase = 'entering'
+
+				requestAnimationFrame(() => {
+					requestAnimationFrame(() => {
+						phase = 'covering'
+					})
+				})
 			})
 		})
 	}
@@ -47,14 +57,18 @@
 	}
 
 	function registerSwupHooks() {
-		if (!window.swup || hooksRegistered) {return}
+		if (!window.swup || hooksRegistered) {
+			return
+		}
 		window.swup.hooks.on('visit:start', onNavigationStart)
 		window.swup.hooks.on('page:view', onNavigationEnd)
 		hooksRegistered = true
 	}
 
 	function unregisterSwupHooks() {
-		if (!window.swup || !hooksRegistered) {return}
+		if (!window.swup || !hooksRegistered) {
+			return
+		}
 		window.swup.hooks.off('visit:start', onNavigationStart)
 		window.swup.hooks.off('page:view', onNavigationEnd)
 		hooksRegistered = false
@@ -62,12 +76,21 @@
 
 	onMount(() => {
 		document.body.style.overflow = 'hidden'
-		scheduleExit()
 
 		if (window.swup) {
 			registerSwupHooks()
 		} else {
 			document.addEventListener('swup:enable', registerSwupHooks)
+		}
+
+		if (document.readyState === 'complete') {
+			scheduleExit()
+		} else {
+			const onLoad = () => {
+				scheduleExit()
+				window.removeEventListener('load', onLoad)
+			}
+			window.addEventListener('load', onLoad)
 		}
 
 		return () => {
@@ -85,29 +108,32 @@
 	class:covering={phase === 'covering'}
 	class:exiting={phase === 'exiting'}
 	class:done={phase === 'done'}
+	aria-hidden={phase === 'done'}
 >
 	<div class="loader-inner">
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="62"
-			height="22"
-			viewBox="0 0 62 22"
-			class="logo-svg"
-		>
-			<path
-				d="M60.493,3.675,49.176,14.992,37.684,3.5,26.309,14.817,15.05,3.558,3.5,15.167"
-				transform="translate(-1.019 1.443)"
-				fill="none"
-				stroke="currentColor"
-				stroke-miterlimit="10"
-				stroke-width="7"
-			/>
-			<g class="rects">
-				<rect width="7" height="7" x="-9" y="24"></rect>
-				<rect width="7" height="7" x="66" y="-9"></rect>
-				<rect width="7" height="7" x="66" y="-9"></rect>
-			</g>
-		</svg>
+		{#key animationKey}
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="62"
+				height="22"
+				viewBox="0 0 62 22"
+				class="logo-svg"
+			>
+				<path
+					d="M60.493,3.675,49.176,14.992,37.684,3.5,26.309,14.817,15.05,3.558,3.5,15.167"
+					transform="translate(-1.019 1.443)"
+					fill="none"
+					stroke="currentColor"
+					stroke-miterlimit="10"
+					stroke-width="7"
+				/>
+				<g class="rects">
+					<rect width="7" height="7" x="-9" y="24"></rect>
+					<rect width="7" height="7" x="66" y="-9"></rect>
+					<rect width="7" height="7" x="66" y="-9"></rect>
+				</g>
+			</svg>
+		{/key}
 	</div>
 </div>
 

@@ -34,12 +34,11 @@
   font-display: swap;
 }
 
-/* 导入 萝莉体 第二版 字体 */
+/* 导入 MiSans 字体 */
 @font-face {
-  font-family: "萝莉体 第二版";
-  src: url("/assets/font/loli.ttf") format("truetype");
+  font-family: "Misans";
+  src: url("/assets/font/MiSans VF-subset.woff2") format("woff2");
   font-style: normal;
-  font-weight: 400;
   font-display: swap;
 }
 
@@ -490,7 +489,7 @@ html {
   }
 
   /* 响应式隐藏 */
-  @media (width <=768px) {
+  @media (width <768px) {
     .dropdown-container {
       @apply hidden;
     }
@@ -594,7 +593,7 @@ html {
     gap: 0.75rem;
   }
 
-  @media (width >=768px) {
+  @media (width >= 768px) {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -658,7 +657,7 @@ html {
 }
 
 /* 桌面端样式 */
-@media (width >=768px) {
+@media (width >= 768px) {
 
   /* 列表模式下的样式 */
   .post-list-container.list-mode {
@@ -685,7 +684,7 @@ html {
     grid-template-columns: repeat(1, 1fr);
     gap: 1.5rem;
 
-    @media (width >=768px) {
+    @media (width >= 768px) {
       grid-template-columns: repeat(2, 1fr);
     }
 

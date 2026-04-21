@@ -30,13 +30,13 @@ const archiveUrl = url('/archive/')
 		</a>
 		<a
 			href={archiveUrl}
-			class='category-pill text-sm px-3 py-1 rounded-lg whitespace-nowrap shrink-0
+			class='category-pill text-sm px-2 py-1 rounded-lg whitespace-nowrap shrink-0
 				   transition-colors duration-200 flex items-center justify-center'
 			data-category-name='__archive__'
 		>
 			<Icon name='material-symbols:check' class='category-check' />
-			{i18n(I18nKey.archive)}
-			<span class='text-sm opacity-60'>{totalPosts}</span>
+			<span class='inline-flex px-1'>{i18n(I18nKey.archive)}</span>
+			<span class='text-sm opacity-60 pr-1'>{totalPosts}</span>
 		</a>
 		<div class='category-divider shrink-0'></div>
 		<div class='scroll-area relative'>
@@ -54,8 +54,8 @@ const archiveUrl = url('/archive/')
 								name='material-symbols:check'
 								class='category-check text-sm'
 							/>
-							{cat.name}
-							<span class='text-sm opacity-60 pl-1'>
+							<span class='inline-flex px-1'>{cat.name}</span>
+							<span class='text-sm opacity-60 pr-1'>
 								{cat.count}
 							</span>
 						</a>

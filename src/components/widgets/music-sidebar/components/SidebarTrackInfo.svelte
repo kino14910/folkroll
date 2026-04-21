@@ -232,7 +232,7 @@
 		outline-offset: 2px;
 	}
 
-	@media (width <= 520px) {
+	@media (width < 520px) {
 		.artist-row {
 			margin-bottom: 0.28rem;
 		}

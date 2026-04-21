@@ -136,7 +136,7 @@
 	vertical-align: middle;
 }
 
-@media (width <= 768px) {
+@media (width < 768px) {
 	#pio {
 		width: 8em;
 	}

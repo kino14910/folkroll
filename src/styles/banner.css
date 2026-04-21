@@ -715,7 +715,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 }
 
 /* 超小屏幕水波纹优化 */
-@media (width <= 360px) {
+@media (width < 360px) {
   .waves {
     height: 6vh !important;
     min-height: 50px !important;

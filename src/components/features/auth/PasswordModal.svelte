@@ -252,7 +252,7 @@
 		color: #f87171;
 	}
 
-	@media (width <= 768px) {
+	@media (width < 768px) {
 		.password-protection {
 			padding: 2rem 1rem;
 		}
