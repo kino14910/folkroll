@@ -15,27 +15,41 @@
 		type SizeConfig,
 	} from './utils/poster-renderer'
 
-	export let title: string
-	export let author: string
-	export let description = ''
-	export let pubDate: string
-	export let coverImage: string | null = null
-	export let url: string
-	export let siteTitle: string
-	export let avatar: string | null = null
+	interface Props {
+		title: string
+		author: string
+		description?: string
+		pubDate: string
+		coverImage?: string | null
+		url: string
+		siteTitle: string
+		avatar?: string | null
+	}
 
-	// Constants
+	let {
+		title,
+		author,
+		description = '',
+		pubDate,
+		coverImage = null,
+		url,
+		siteTitle,
+		avatar = null,
+	}: Props = $props()
+
 	const SCALE = 2
 	const WIDTH = 425 * SCALE
 	const PADDING = 24 * SCALE
 	const CONTENT_WIDTH = WIDTH - PADDING * 2
 	const FONT_FAMILY = "'Roboto', sans-serif"
 
-	// State
-	let showModal = false
-	let posterImage: string | null = null
-	let generating = false
-	let themeColor = '#558e88'
+	let showModal = $state(false)
+	let posterImage = $state<string | null>(null)
+	let generating = $state(false)
+	let themeColor = $state('#558e88')
+	let copied = $state(false)
+
+	const COPY_FEEDBACK_DURATION = 2000
 
 	function isDarkMode(): boolean {
 		return document.documentElement.classList.contains('dark')
@@ -130,11 +144,9 @@
 			canvas.width = WIDTH
 			canvas.height = canvasHeight
 
-			// Background
 			ctx.fillStyle = colors.background
 			ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-			// Decorative circles
 			drawDecorativeCircles(
 				ctx,
 				canvas.width,
@@ -143,7 +155,6 @@
 				SCALE,
 			)
 
-			// Cover image
 			if (coverImg) {
 				const imgRatio = coverImg.width / coverImg.height
 				const targetRatio = WIDTH / coverHeight
@@ -179,7 +190,6 @@
 				ctx.restore()
 			}
 
-			// Date badge
 			const dateObj = parseDate(pubDate)
 			if (dateObj) {
 				drawDateBadge(
@@ -193,7 +203,6 @@
 				)
 			}
 
-			// Title
 			const titleFontSize = 24 * SCALE
 			const titleLineHeight = 30 * SCALE
 			ctx.textBaseline = 'top'
@@ -208,7 +217,6 @@
 			}
 			drawY += 16 * SCALE - (titleLineHeight - titleFontSize)
 
-			// Description
 			if (description) {
 				const descFontSize = 14 * SCALE
 				ctx.fillStyle = colors.descBg
@@ -237,7 +245,6 @@
 				drawY += 8 * SCALE
 			}
 
-			// Separator line
 			drawY += 24 * SCALE
 			ctx.beginPath()
 			ctx.strokeStyle = colors.separator
@@ -247,12 +254,10 @@
 			ctx.stroke()
 			drawY += 16 * SCALE
 
-			// Footer
 			const footerY = drawY
 			const qrSize = 80 * SCALE
 			const qrX = WIDTH - PADDING - qrSize
 
-			// QR code background
 			ctx.fillStyle = colors.qrBg
 			ctx.shadowColor = 'rgba(0, 0, 0, 0.1)'
 			ctx.shadowBlur = 4 * SCALE
@@ -261,7 +266,6 @@
 			ctx.fill()
 			ctx.shadowColor = 'transparent'
 
-			// QR code image
 			if (qrImg) {
 				const qrInnerSize = 76 * SCALE
 				const qrPadding = (qrSize - qrInnerSize) / 2
@@ -274,7 +278,6 @@
 				)
 			}
 
-			// Avatar
 			if (avatarImg) {
 				ctx.save()
 				const avatarSize = 64 * SCALE
@@ -311,7 +314,6 @@
 				ctx.stroke()
 			}
 
-			// Author text
 			const avatarOffset = avatar ? 64 * SCALE + 16 * SCALE : 0
 			const textX = PADDING + avatarOffset
 
@@ -323,7 +325,6 @@
 			ctx.font = `700 ${20 * SCALE}px ${FONT_FAMILY}`
 			ctx.fillText(author, textX, footerY + 20 * SCALE)
 
-			// Site title
 			ctx.fillStyle = colors.metaText
 			ctx.font = `${12 * SCALE}px ${FONT_FAMILY}`
 			ctx.fillText(i18n(I18nKey.scanToRead), textX, footerY + 44 * SCALE)
@@ -352,9 +353,6 @@
 	function closeModal() {
 		showModal = false
 	}
-
-	let copied = false
-	const COPY_FEEDBACK_DURATION = 2000
 
 	async function copyLink() {
 		try {
